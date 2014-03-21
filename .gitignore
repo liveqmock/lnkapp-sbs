@@ -20,6 +20,8 @@ local.properties
 *.ipr
 *.iws
 *.iml
+.idea
+.gitignore
 
 # External tool builders
 .externalToolBuilders/
