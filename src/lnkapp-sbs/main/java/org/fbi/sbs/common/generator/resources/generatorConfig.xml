@@ -4,42 +4,42 @@
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 
 <generatorConfiguration>
-    <classPathEntry location="/workspace/git-linking/lib/ojdbc6.jar"/>
+    <classPathEntry location="/workspace/lib/ojdbc6.jar"/>
 
     <!--信息 -->
     <context id="AllInfo" targetRuntime="MyBatis3">
         <jdbcConnection driverClass="oracle.jdbc.driver.OracleDriver"
-                        connectionURL="jdbc:oracle:thin:@localhost:1521:orcl"
-                        userId="fis"
-                        password="fis">
+                        connectionURL="jdbc:oracle:thin:@10.143.20.130:1521:orcl"
+                        userId="ac01"
+                        password="ac01">
         </jdbcConnection>
 
         <javaTypeResolver>
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>
 
-        <javaModelGenerator targetPackage="org.fbi.sbs.repository.model" targetProject="src/main/java">
+        <javaModelGenerator targetPackage="org.fbi.sbs.repository.model" targetProject="main/java">
             <property name="enableSubPackages" value="true"/>
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
 
-        <sqlMapGenerator targetPackage="org.fbi.sbs.repository.mapper" targetProject="src/main/java">
+        <sqlMapGenerator targetPackage="org.fbi.sbs.repository.mapper" targetProject="main/java">
             <property name="enableSubPackages" value="true"/>
         </sqlMapGenerator>
 
-        <javaClientGenerator type="XMLMAPPER" targetPackage="org.fbi.sbs.repository.dao" targetProject="src/main/java">
+        <javaClientGenerator type="XMLMAPPER" targetPackage="org.fbi.sbs.repository.dao" targetProject="main/java">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
 
 
-        <!--黄岛非税 -->
-        <table schema="fis" tableName="fs_hd_payment_info">
+        <!-- sbs 1.0 -->
+        <table schema="ac01" tableName="acttsc">
             <property name="ignoreQualifiersAtRuntime" value="true"/>
         </table>
-        <table schema="fis" tableName="fs_hd_payment_item">
+       <!-- <table schema="fis" tableName="fs_hd_payment_item">
             <property name="ignoreQualifiersAtRuntime" value="true"/>
             <generatedKey column="pkid" sqlStatement="select sys_guid() from dual" identity="false"/>
-        </table>
+        </table>-->
 
     </context>
 </generatorConfiguration>

@@ -15,9 +15,13 @@ import java.util.List;
  * Time: 14:47:13
  */
 public class Ibator {
-    public static void main(String[] argv) throws Exception {
-        Ibator ibator = new Ibator();
-        ibator.run("resources/generatorConfig.xml");
+    public static void main(String[] argv) {
+        try {
+            Ibator ibator = new Ibator();
+            ibator.run("resources/generatorConfig.xml");
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void run(String configfile) throws Exception {
