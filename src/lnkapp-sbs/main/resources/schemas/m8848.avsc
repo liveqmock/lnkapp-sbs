@@ -1,10 +1,23 @@
 {
- "namespace": "example.avro",
+ "namespace": "org.fbi.sbs.avro",
  "type": "record",
- "name": "User",
+ "name": "M8848",
  "fields": [
-     {"name": "name", "type": "string"},
-     {"name": "favorite_number",  "type": ["int", "null"]},
-     {"name": "favorite_color", "type": ["string", "null"]}
+     {"name": "batseq", "type": "string"},
+     {"name": "orgidt", "type": "string"},
+     {"name": "depnum", "type": "string"},
+     {"name": "pastyp", "type": "string"},
+     {"name": "inpflg", "type": "string"},
+     {"name": "sbknum", "type": "string"},
+     {"name": "wrkunt", "type": "string"},
+     {"name": "stmadd", "type": "string"},
+     {"name": "intnet", "type": "string"},
+
+     {"name": "engnam", "type": "string"},
+     {"name": "regadd", "type": "string"},
+     {"name": "coradd", "type": "string"},
+     {"name": "cusnam", "type": "string"},
+     {"name": "funcde", "type": "string"},
+     {"name": "begnum", "type": "string"}
  ]
 }

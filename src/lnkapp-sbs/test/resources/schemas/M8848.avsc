@@ -1,0 +1,23 @@
+{
+ "namespace": "org.fbi.sbs.avro",
+ "type": "record",
+ "name": "M8848",
+ "fields": [
+     {"name": "batseq", "type": ["string", "null"]},
+     {"name": "orgidt", "type": ["string", "null"]},
+     {"name": "depnum", "type": ["string", "null"]},
+     {"name": "pastyp", "type": ["string", "null"]},
+     {"name": "inpflg", "type": ["string", "null"]},
+     {"name": "sbknum", "type": ["string", "null"]},
+     {"name": "wrkunt", "type": ["string", "null"]},
+     {"name": "stmadd", "type": ["string", "null"]},
+     {"name": "intnet", "type": ["string", "null"]},
+
+     {"name": "engnam", "type": ["string", "null"]},
+     {"name": "regadd", "type": ["string", "null"]},
+     {"name": "coradd", "type": ["string", "null"]},
+     {"name": "cusnam", "type": ["string", "null"]},
+     {"name": "funcde", "type": ["string", "null"]},
+     {"name": "begnum", "type": ["string", "null"]}
+ ]
+}

@@ -35,6 +35,7 @@ public class AvroSchemaManager {
         GenericDatumReader<GenericRecord> datumReader = new GenericDatumReader<GenericRecord>(schema);
         JsonDecoder decoder = DecoderFactory.get().jsonDecoder(schema, serialStr);
         GenericData.Record record = new GenericData.Record(schema);
+        record.
         datumReader.read(record, decoder);
         return record;
     }

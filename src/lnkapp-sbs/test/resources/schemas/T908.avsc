@@ -1,0 +1,10 @@
+{
+ "namespace": "org.fbi.sbs.avro",
+ "type": "record",
+ "name": "T908",
+ "fields": [
+     {"name": "name", "type": "string"},
+     {"name": "favorite_number",  "type": "string"},
+     {"name": "favorite_color", "type": "string"}
+ ]
+}
