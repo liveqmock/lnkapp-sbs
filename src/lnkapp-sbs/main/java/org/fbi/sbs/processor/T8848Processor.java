@@ -1,11 +1,15 @@
 package org.fbi.sbs.processor;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.fbi.linking.processor.ProcessorException;
 import org.fbi.linking.processor.standprotocol10.Stdp10ProcessorRequest;
 import org.fbi.linking.processor.standprotocol10.Stdp10ProcessorResponse;
-import org.fbi.sbs.domain.M8848;
+import org.fbi.sbs.domain.Tia8848;
+import org.fbi.sbs.domain.ToaT908;
 import org.fbi.sbs.enums.TxnRtnCode;
+import org.fbi.sbs.helper.AvroSchemaManager;
+import org.fbi.sbs.helper.FbiBeanUtils;
 import org.fbi.sbs.helper.MybatisFactory;
 import org.fbi.sbs.repository.dao.ActtbcMapper;
 import org.fbi.sbs.repository.dao.ActtmcMapper;
@@ -24,10 +28,10 @@ public class T8848Processor extends AbstractTxnProcessor {
     @Override
     protected void doRequest(Stdp10ProcessorRequest request, Stdp10ProcessorResponse response) throws ProcessorException, IOException {
 
-        M8848 m8848 = (M8848) m;
+        Tia8848 tia8848 = (Tia8848) tia;
 
         // 获取请求操作的人员ID和日期
-        String tellerId = request.getHeader("tellerId");
+        String tellerId = request.getHeader("tellerId").trim().substring(0, 4);
         Date today = new Date();
 
         // Acttsc行业代码小类表 Acttmc 行业代码中类表 Acttbc行业代码大类表
@@ -45,43 +49,59 @@ public class T8848Processor extends AbstractTxnProcessor {
 
         // 根据功能码初始化变量
         // 4-增 3-删 2-改
-        int funcde = Integer.parseInt(m8848.getFuncde());
+        int funcde = Integer.parseInt(tia8848.getFuncde());
         if (funcde < 0 || funcde > 4) {
             response.setHeader("rtnCode", TxnRtnCode.TXN_EXECUTE_FAILED.getCode());
             response.setResponseBody(("功能码[" + funcde + "]错误").getBytes(response.getCharacterEncoding()));
             return;
         } else if (funcde == 0 || funcde == 3) {
-            tbc.setTdbsrt(m8848.pastyp);
-            tmc.setTdbsrt(m8848.pastyp);
-            tmc.setTdmsrt(m8848.inpflg);
-            tsc.setTddtdc(m8848.pastyp + m8848.inpflg + m8848.sbknum);
+            tbc.setTdbsrt(tia8848.pastyp);
+            tmc.setTdbsrt(tia8848.pastyp);
+            tmc.setTdmsrt(tia8848.inpflg);
+            tsc.setTddtdc(tia8848.pastyp + tia8848.inpflg + tia8848.sbknum);
         } else if (funcde == 2 || funcde == 4) {
-            tbc.setTdbsrt(m8848.pastyp);
-            tmc.setTdbsrt(m8848.pastyp);
-            tmc.setTdmsrt(m8848.inpflg);
-            tsc.setTddtdc(m8848.pastyp + m8848.inpflg + m8848.sbknum);
-            tbc.setTdbnam(m8848.wrkunt);
-            tmc.setTdmnam(m8848.stmadd);
-            tsc.setTddnam(m8848.intnet);
-            tsc.setTddcn1(m8848.engnam);
-            tsc.setTddcn2(m8848.regadd);
-            tsc.setTddcn3(m8848.coradd);
-            tsc.setTddcn4(m8848.cusnam);
+            tbc.setTdbsrt(tia8848.pastyp);
+            tmc.setTdbsrt(tia8848.pastyp);
+            tmc.setTdmsrt(tia8848.inpflg);
+            tsc.setTddtdc(tia8848.pastyp + tia8848.inpflg + tia8848.sbknum);
+            tbc.setTdbnam(tia8848.wrkunt);
+            tmc.setTdmnam(tia8848.stmadd);
+            tsc.setTddnam(tia8848.intnet);
+            tsc.setTddcn1(tia8848.engnam);
+            tsc.setTddcn2(tia8848.regadd);
+            tsc.setTddcn3(tia8848.coradd);
+            tsc.setTddcn4(tia8848.cusnam);
         } else if (funcde == 1) {
             // 跳过begnum笔ACTTSC[行业代码小类]记录
-            begnum = Integer.parseInt(m8848.begnum);
+            begnum = Integer.parseInt(tia8848.begnum);
         }
-
         List<Acttsc> tscList = qryAllActtsc();
 
         switch (funcde) {
             case 0:
+                // 单笔查询
                 tsc = qryActtscByTddtdc(tsc.getTddtdc());
                 tbc.setTdbnam(qryTdbnamByTdbsrt(tbc.getTdbsrt()));
                 tmc.setTdmnam(qryTdmnamByTdbTdmsrt(tmc.getTdbsrt(), tmc.getTdmsrt()));
+                ToaT908 t908 = new ToaT908();
+                FbiBeanUtils.copyProperties(tsc, t908);
+                t908.tdbsrt = tbc.getTdbsrt();
+                t908.tdmsrt = tmc.getTdmsrt();
+                t908.tdssrt = tsc.getTddtdc().substring(3);
+                t908.tdmnam = tmc.getTdmnam();
+                t908.tdbnam = tbc.getTdbnam();
+                response.setHeader("rtnCode", TxnRtnCode.TXN_EXECUTE_SECCESS.getCode());
+                try {
+                    response.setResponseBody(AvroSchemaManager.encode("T908", t908));
+                } catch (IllegalAccessException e) {
+                    response.setHeader("rtnCode", TxnRtnCode.TXN_EXECUTE_FAILED.getCode());
+                    response.setResponseBody(("组装响应报文时序列化异常").getBytes(response.getCharacterEncoding()));
+                    logger.error("完成查询，组装响应报文时序列化异常", e);
+                }
                 break;
             case 1:
                 // 跳过begnum笔记录
+                // TODO 多笔
                 tscList = tscList.subList(begnum, tscList.size() - 1);
                 break;
             case 2:
@@ -99,12 +119,24 @@ public class T8848Processor extends AbstractTxnProcessor {
                 }
                 break;
             case 4:
-                // 增加行业代码
+                // 增加行业代码 0-成功 1-重复写入 -1-异常，事务回滚
+                int cnt = insertActtc(tsc, tmc, tbc);
+                if (1 == cnt) {
+                    response.setHeader("rtnCode", TxnRtnCode.TXN_EXECUTE_FAILED.getCode());
+                    response.setResponseBody(("行业代码" + tsc.getTddtdc() + "已存在").getBytes(response.getCharacterEncoding()));
+                } else if (-1 == cnt) {
+                    response.setHeader("rtnCode", TxnRtnCode.TXN_EXECUTE_FAILED.getCode());
+                    response.setResponseBody(("行业代码添加失败").getBytes(response.getCharacterEncoding()));
+                } else {
+                    // 交易成功
+                }
                 break;
         }
 
-        response.setHeader("rtnCode", TxnRtnCode.TXN_EXECUTE_SECCESS.getCode());
-        response.setResponseBody("交易完成".getBytes(response.getCharacterEncoding()));
+        if (StringUtils.isEmpty(response.getHeader("rtnCode"))) {
+            response.setHeader("rtnCode", TxnRtnCode.TXN_EXECUTE_SECCESS.getCode());
+            response.setResponseBody("交易完成".getBytes(response.getCharacterEncoding()));
+        }
     }
 
     private List<Acttsc> qryAllActtsc() {
@@ -246,7 +278,7 @@ public class T8848Processor extends AbstractTxnProcessor {
                 return 1;
             }
         } catch (Exception e) {
-            logger.error("删除行业代码记录异常", e);
+            logger.error("新增行业代码记录异常", e);
             session.rollback();
             return -1;
         } finally {

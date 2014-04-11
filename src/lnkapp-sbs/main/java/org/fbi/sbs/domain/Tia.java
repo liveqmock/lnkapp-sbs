@@ -9,18 +9,18 @@ import java.lang.reflect.Field;
 /**
  * Created by lenovo on 2014-4-10 0010.
  */
-public class AssembleM {
+public class Tia {
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public void assemble(GenericData.Record record) throws IllegalAccessException {
+    public void from(GenericData.Record record) throws IllegalAccessException {
 
         Class clazz = this.getClass();
         Field[] fields = clazz.getDeclaredFields();
-        for(Field f : fields) {
+        for (Field f : fields) {
             f.setAccessible(true);
             // TODO 暂时只处理String类型
-            f.set(this, ((String) (record.get(f.getName()))).trim());
+            f.set(this, (record.get(f.getName()).toString()).trim());
         }
 
         logger.info("Request bean 装配结束.");

@@ -4,6 +4,7 @@ import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.*;
+import org.apache.avro.util.Utf8;
 
 import java.io.*;
 import java.net.Socket;
@@ -16,7 +17,7 @@ import java.util.Date;
 public class LnkingClient {
 
     private String ip = "127.0.0.1";
-    private int port = 60000;
+    private int port = 60006;
 
 
     public byte[] call(byte[] sendbuf) {
@@ -59,12 +60,12 @@ public class LnkingClient {
     }
 
     private String getRequestMsg8848(String body) {
-        String header = "1.0" +
-                "123456789012345678" +
-                "0000" +
-                "1538848" +
-                "999999999" +
-                "123456789012" +
+        String header = "1.0" +    // 3 version
+                "123456789012345678" + // 18 serialNo
+                "0000" + // 4-rtnCode
+                "1538848" + // 7-txnCode
+                "999999999" + // 9-branchId
+                "123456789012" + // 12-tellerId
                 "FIS153" +  //userid 6
                 "SBS   " +  //appid 6
                 new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) +
@@ -83,19 +84,39 @@ public class LnkingClient {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             JsonEncoder encoder = EncoderFactory.get().jsonEncoder(schema, baos);
             GenericData.Record record = new GenericData.Record(schema);
-            record.put("orgidt", "orgidt");
-            record.put("batseq", "batseq");
-            record.put("pastyp", "pastyp");
-            record.put("inpflg", "inpflg");
-            record.put("sbknum", "sbknum");
-            record.put("wrkunt", "wrkunt");
+            record.put("batseq", "11111");
+            record.put("orgidt", "010");
+            record.put("pastyp", "1");
+            record.put("inpflg", "22");
+            record.put("sbknum", "34");
+            record.put("wrkunt", "Big");
+            record.put("funcde", "2");
+
+            record.put("depnum", "中文");
+            record.put("stmadd", "Middle");
+            record.put("intnet", "Small");
+            record.put("engnam", "hangyeA");
+            record.put("regadd", "regadd");
+            record.put("coradd", "coradd");
+            record.put("cusnam", "张三");
+            record.put("begnum", "1");
             datumWriter.write(record, encoder);
             encoder.flush();
+            baos.close();
+            String msg = new String(baos.toByteArray());
+/*
+            GenericDatumReader<GenericRecord> datumReader = new GenericDatumReader<GenericRecord>(schema);
+            JsonDecoder decoder = DecoderFactory.get().jsonDecoder(schema, msg);
+            GenericData.Record record2 = new GenericData.Record(schema);
+            datumReader.read(record2, decoder);
 
-            System.out.println(new String(baos.toByteArray()));
+            System.out.println(record2.get("cusnam").toString());
+            System.out.println(record2.get("funcde"));
+            System.out.println(record2.get("wrkunt"));
+            System.out.println(record2.get("wrkunt").getClass().getName());*/
 
-           /* LnkingClient client = new LnkingClient();
-            String message = client.getRequestMsg8848(baos.toString("GBK"));
+            LnkingClient client = new LnkingClient();
+            String message = client.getRequestMsg8848(msg);
             System.out.printf("发送报文:%s\n", message);
 
             int len = message.getBytes("GBK").length;
@@ -104,7 +125,7 @@ public class LnkingClient {
                 strLen += " ";
             }
             byte[] recvbuf = client.call((strLen + message).getBytes("GBK"));
-            System.out.printf("接收报文：%s\n", new String(recvbuf, "GBK"));*/
+            System.out.printf("接收报文:%s\n", new String(recvbuf, "GBK"));
         } catch (Exception e) {
             e.printStackTrace();
         }

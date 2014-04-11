@@ -19,6 +19,8 @@
     </environments>
     <mappers>
         <mapper resource="org/fbi/sbs/repository/mapper/ActtscMapper.xml"/>
+        <mapper resource="org/fbi/sbs/repository/mapper/ActtmcMapper.xml"/>
+        <mapper resource="org/fbi/sbs/repository/mapper/ActtbcMapper.xml"/>
     </mappers>
 
 </configuration>

@@ -1,11 +1,6 @@
 package org.fbi.sbs.domain;
 
-import org.apache.avro.generic.GenericData;
-
-/**
- * Created by lenovo on 2014-4-10 0010.
- */
-public class M8848 extends AssembleM {
+public class Tia8848 extends Tia {
 
     public String batseq;
     public String orgidt;
@@ -81,5 +76,65 @@ public class M8848 extends AssembleM {
 
     public String getBegnum() {
         return begnum;
+    }
+
+    public void setBatseq(String batseq) {
+        this.batseq = batseq;
+    }
+
+    public void setOrgidt(String orgidt) {
+        this.orgidt = orgidt;
+    }
+
+    public void setDepnum(String depnum) {
+        this.depnum = depnum;
+    }
+
+    public void setPastyp(String pastyp) {
+        this.pastyp = pastyp;
+    }
+
+    public void setInpflg(String inpflg) {
+        this.inpflg = inpflg;
+    }
+
+    public void setSbknum(String sbknum) {
+        this.sbknum = sbknum;
+    }
+
+    public void setWrkunt(String wrkunt) {
+        this.wrkunt = wrkunt;
+    }
+
+    public void setStmadd(String stmadd) {
+        this.stmadd = stmadd;
+    }
+
+    public void setIntnet(String intnet) {
+        this.intnet = intnet;
+    }
+
+    public void setEngnam(String engnam) {
+        this.engnam = engnam;
+    }
+
+    public void setRegadd(String regadd) {
+        this.regadd = regadd;
+    }
+
+    public void setCoradd(String coradd) {
+        this.coradd = coradd;
+    }
+
+    public void setCusnam(String cusnam) {
+        this.cusnam = cusnam;
+    }
+
+    public void setFuncde(String funcde) {
+        this.funcde = funcde;
+    }
+
+    public void setBegnum(String begnum) {
+        this.begnum = begnum;
     }
 }
