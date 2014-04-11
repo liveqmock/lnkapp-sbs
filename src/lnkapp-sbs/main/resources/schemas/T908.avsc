@@ -3,8 +3,18 @@
  "type": "record",
  "name": "T908",
  "fields": [
-     {"name": "name", "type": "string"},
-     {"name": "favorite_number",  "type": "string"},
-     {"name": "favorite_color", "type": "string"}
+     {"name": "tdbsrt", "type": "string"},
+     {"name": "tdmsrt", "type": "string"},
+     {"name": "tdssrt", "type": "string"},
+     {"name": "tdbnam", "type": "string"},
+     {"name": "tdmnam", "type": "string"},
+     {"name": "tdsnam", "type": "string"},
+     {"name": "tddnam", "type": "string"},
+     {"name": "tddcn1", "type": "string"},
+     {"name": "tddcn2", "type": "string"},
+     {"name": "tddcn3", "type": "string"},
+     {"name": "tddcn4", "type": "string"},
+     {"name": "amdtlr", "type": "string"},
+     {"name": "upddat", "type": "string"}
  ]
 }
