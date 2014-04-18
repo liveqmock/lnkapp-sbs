@@ -23,9 +23,9 @@ import java.io.InputStream;
  */
 public class AvroSchemaManager {
     public static final Logger logger = LoggerFactory.getLogger(AvroSchemaManager.class);
-    private static final String SCHEMA_PATH = ProjectConfigManager.getInstance().getProperty("sbs.schema.path");
-    private static final String SCHEMA_PREFIX = ProjectConfigManager.getInstance().getProperty("sbs.schema.prefix");
-    private static final String SCHEMA_SUFFIX = ProjectConfigManager.getInstance().getProperty("sbs.schema.suffix");
+    public static final String SCHEMA_PATH = ProjectConfigManager.getInstance().getProperty("sbs.schema.path");
+    public static final String SCHEMA_PREFIX = ProjectConfigManager.getInstance().getProperty("sbs.schema.prefix");
+    public static final String SCHEMA_SUFFIX = ProjectConfigManager.getInstance().getProperty("sbs.schema.suffix");
 
     public static Schema getSchema(String schemaFileName) {
         InputStream inputStream = AvroSchemaManager.class.getClassLoader().getResourceAsStream(schemaFileName);

@@ -87,19 +87,20 @@ public class LnkingClient {
             record.put("batseq", "11111");
             record.put("orgidt", "010");
             record.put("pastyp", "1");
-            record.put("inpflg", "22");
-            record.put("sbknum", "34");
+            record.put("inpflg", "23");
+            record.put("sbknum", "36");
             record.put("wrkunt", "Big");
-            record.put("funcde", "2");
+            record.put("funcde", "1");
 
-            record.put("depnum", "中文");
+            record.put("depnum", "jigou");
             record.put("stmadd", "Middle");
-            record.put("intnet", "Small");
+            record.put("intnet", "Small36");
             record.put("engnam", "hangyeA");
             record.put("regadd", "regadd");
             record.put("coradd", "coradd");
-            record.put("cusnam", "张三");
-            record.put("begnum", "1");
+            record.put("cusnam", "zhangsan");
+            record.put("begnum", "0");
+            // // 4-增 3-删 2-改
             datumWriter.write(record, encoder);
             encoder.flush();
             baos.close();

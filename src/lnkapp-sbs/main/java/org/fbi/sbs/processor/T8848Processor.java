@@ -1,5 +1,12 @@
 package org.fbi.sbs.processor;
 
+import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericData;
+import org.apache.avro.generic.GenericDatumWriter;
+import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.io.EncoderFactory;
+import org.apache.avro.io.JsonEncoder;
+import org.apache.avro.util.Utf8;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.fbi.linking.processor.ProcessorException;
@@ -18,6 +25,7 @@ import org.fbi.sbs.repository.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -75,7 +83,6 @@ public class T8848Processor extends AbstractTxnProcessor {
             // 跳过begnum笔ACTTSC[行业代码小类]记录
             begnum = Integer.parseInt(tia8848.begnum);
         }
-        List<Acttsc> tscList = qryAllActtsc();
 
         switch (funcde) {
             case 0:
@@ -102,7 +109,37 @@ public class T8848Processor extends AbstractTxnProcessor {
             case 1:
                 // 跳过begnum笔记录
                 // TODO 多笔
-                tscList = tscList.subList(begnum, tscList.size() - 1);
+                List<Acttsc> tscList = qryAllActtsc();
+                tscList = tscList.subList(begnum, tscList.size());
+                try {
+
+                    Schema detailSchema = AvroSchemaManager.getSchema(AvroSchemaManager.SCHEMA_PATH + "T909_DETAIL" + AvroSchemaManager.SCHEMA_SUFFIX);
+//                    logger.info(detailSchema.toString());
+                    GenericData.Array<GenericRecord> details =  new GenericData.Array<GenericRecord>(tscList.size(), null);
+
+                    for(Acttsc bean : tscList) {
+                        GenericData.Record detail = new GenericData.Record(detailSchema);
+                        detail.put("tddtdc", bean.getTddtdc());
+                        detail.put("tddnam", bean.getTddnam());
+                        details.add(detail);
+                    }
+                    Schema schema = AvroSchemaManager.getSchema(AvroSchemaManager.SCHEMA_PATH + "T909" + AvroSchemaManager.SCHEMA_SUFFIX);
+                    GenericDatumWriter<GenericData.Record> datumWriter = new GenericDatumWriter<>(schema);
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    JsonEncoder encoder = EncoderFactory.get().jsonEncoder(schema, baos);
+                    GenericData.Record record = new GenericData.Record(schema);
+                    record.put("totcnt", tscList.size());
+                    record.put("details", details);
+                    datumWriter.write(record, encoder);
+                    encoder.flush();
+                    baos.close();
+                    response.setHeader("rtnCode", TxnRtnCode.TXN_EXECUTE_SECCESS.getCode());
+                    response.setResponseBody(baos.toByteArray());
+                } catch (Exception e) {
+                    response.setHeader("rtnCode", TxnRtnCode.TXN_EXECUTE_FAILED.getCode());
+                    response.setResponseBody(("组装响应报文时序列化异常").getBytes(response.getCharacterEncoding()));
+                    logger.error("完成查询，组装响应报文时序列化异常", e);
+                }
                 break;
             case 2:
                 // 更新行业代码三表

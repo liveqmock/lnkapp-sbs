@@ -4,15 +4,17 @@
  "name": "T909",
  "fields": [
      {"name": "totcnt", "type": "string"},
-     {"name": "details", "type": "arrays", "items":"detail"}
- ]
-}
-{
- "namespace": "org.fbi.sbs.avro",
- "type": "record",
- "name": "detail",
- "fields": [
-     {"name": "tddtdc", "type": "string"},
-     {"name": "tddnam", "type": "string"}
+     {"name": "details", "type": "array",
+     "items":{
+      "namespace": "org.fbi.sbs.avro",
+      "type": "record",
+      "name": "detail",
+      "fields": [
+          {"name": "tddtdc", "type": "string"},
+          {"name": "tddnam", "type": "string"}
+      ]
+     }
+     }
+     }
  ]
 }
