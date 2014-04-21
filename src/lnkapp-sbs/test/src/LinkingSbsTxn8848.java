@@ -85,14 +85,14 @@ public class LinkingSbsTxn8848 {
             record.put("orgidt", "010");
             record.put("pastyp", "1");
             record.put("inpflg", "23");
-            record.put("sbknum", "36");
+            record.put("sbknum", "50");
             record.put("wrkunt", "Big");
-            record.put("funcde", "0");
+            record.put("funcde", "4");
             // // 4-增 3-删 2-改 0-单笔 1-多笔
 
             record.put("depnum", "jigou");
             record.put("stmadd", "Middle");
-            record.put("intnet", "Small36");
+            record.put("intnet", "中文");
             record.put("engnam", "hangyeA");
             record.put("regadd", "regadd");
             record.put("coradd", "coradd");
