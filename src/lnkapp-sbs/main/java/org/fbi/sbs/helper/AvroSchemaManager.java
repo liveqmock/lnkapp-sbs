@@ -9,6 +9,7 @@ import org.apache.avro.io.DecoderFactory;
 import org.apache.avro.io.EncoderFactory;
 import org.apache.avro.io.JsonDecoder;
 import org.apache.avro.io.JsonEncoder;
+import org.apache.commons.lang.StringUtils;
 import org.fbi.sbs.domain.Tia;
 import org.fbi.sbs.domain.Toa;
 import org.slf4j.Logger;
@@ -26,8 +27,16 @@ public class AvroSchemaManager {
     public static final String SCHEMA_PATH = ProjectConfigManager.getInstance().getProperty("sbs.schema.path");
     public static final String SCHEMA_PREFIX = ProjectConfigManager.getInstance().getProperty("sbs.schema.prefix");
     public static final String SCHEMA_SUFFIX = ProjectConfigManager.getInstance().getProperty("sbs.schema.suffix");
+    public static final String SCHEMA_EXTENSION = ProjectConfigManager.getInstance().getProperty("sbs.schema.extension");
 
     public static Schema getSchema(String schemaFileName) {
+        if (StringUtils.isEmpty(schemaFileName)) {
+            return null;
+        } else if (!schemaFileName.contains(SCHEMA_SUFFIX)) {
+            schemaFileName = schemaFileName + SCHEMA_SUFFIX;
+        }
+        schemaFileName = (SCHEMA_PATH + schemaFileName).trim();
+        logger.info("开始读取Schema文件：" + schemaFileName);
         InputStream inputStream = AvroSchemaManager.class.getClassLoader().getResourceAsStream(schemaFileName);
         try {
             Schema schema = new Schema.Parser().parse(inputStream);
@@ -36,36 +45,6 @@ public class AvroSchemaManager {
             logger.info("Schema文件读取错误", e);
             throw new RuntimeException(e);
         }
-    }
-
-    public static Tia decode(String txnCode, byte[] bytes) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
-        String strRequestBody = new String(bytes);
-        logger.info(" Request Schema:[" + txnCode + "]" + strRequestBody);
-
-        Schema schema = AvroSchemaManager.getSchema(SCHEMA_PATH + SCHEMA_PREFIX + txnCode + SCHEMA_SUFFIX);
-        GenericDatumReader<GenericRecord> datumReader = new GenericDatumReader<GenericRecord>(schema);
-        JsonDecoder decoder = DecoderFactory.get().jsonDecoder(schema, new String(bytes));
-        GenericData.Record record = new GenericData.Record(schema);
-        datumReader.read(record, decoder);
-
-        String className = "org.fbi.sbs.domain.Tia" + txnCode;
-        Class clazz = Class.forName(className);
-        Tia tia = (Tia)clazz.newInstance();
-        tia.from(record);
-        return tia;
-    }
-
-    public static byte[] encode(String formCode, Toa toa) throws IOException, IllegalAccessException {
-        Schema schema = AvroSchemaManager.getSchema(SCHEMA_PATH + formCode + SCHEMA_SUFFIX);
-        GenericDatumWriter<GenericData.Record> datumWriter = new GenericDatumWriter<>(schema);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        JsonEncoder encoder = EncoderFactory.get().jsonEncoder(schema, baos);
-        GenericData.Record record = new GenericData.Record(schema);
-        toa.to(record);
-        datumWriter.write(record, encoder);
-        encoder.flush();
-        baos.close();
-        return baos.toByteArray();
     }
 
 }

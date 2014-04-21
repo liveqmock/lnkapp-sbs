@@ -1,9 +1,0 @@
-{
- "namespace": "org.fbi.sbs.avro",
- "type": "record",
- "name": "detail",
- "fields": [
-     {"name": "tddtdc", "type": "string"},
-     {"name": "tddnam", "type": "string"}
- ]
-}

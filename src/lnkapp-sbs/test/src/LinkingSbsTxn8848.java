@@ -1,10 +1,7 @@
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
-import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericDatumWriter;
-import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.*;
-import org.apache.avro.util.Utf8;
 
 import java.io.*;
 import java.net.Socket;
@@ -14,7 +11,7 @@ import java.util.Date;
 /**
  * Linking client
  */
-public class LnkingClient {
+public class LinkingSbsTxn8848 {
 
     private String ip = "127.0.0.1";
     private int port = 60006;
@@ -90,7 +87,8 @@ public class LnkingClient {
             record.put("inpflg", "23");
             record.put("sbknum", "36");
             record.put("wrkunt", "Big");
-            record.put("funcde", "1");
+            record.put("funcde", "0");
+            // // 4-增 3-删 2-改 0-单笔 1-多笔
 
             record.put("depnum", "jigou");
             record.put("stmadd", "Middle");
@@ -100,7 +98,7 @@ public class LnkingClient {
             record.put("coradd", "coradd");
             record.put("cusnam", "zhangsan");
             record.put("begnum", "0");
-            // // 4-增 3-删 2-改
+
             datumWriter.write(record, encoder);
             encoder.flush();
             baos.close();
@@ -116,7 +114,7 @@ public class LnkingClient {
             System.out.println(record2.get("wrkunt"));
             System.out.println(record2.get("wrkunt").getClass().getName());*/
 
-            LnkingClient client = new LnkingClient();
+            LinkingSbsTxn8848 client = new LinkingSbsTxn8848();
             String message = client.getRequestMsg8848(msg);
             System.out.printf("发送报文:%s\n", message);
 

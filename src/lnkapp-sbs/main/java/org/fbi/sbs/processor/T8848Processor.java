@@ -13,11 +13,13 @@ import org.fbi.linking.processor.ProcessorException;
 import org.fbi.linking.processor.standprotocol10.Stdp10ProcessorRequest;
 import org.fbi.linking.processor.standprotocol10.Stdp10ProcessorResponse;
 import org.fbi.sbs.domain.Tia8848;
+import org.fbi.sbs.domain.Toa;
 import org.fbi.sbs.domain.ToaT908;
 import org.fbi.sbs.enums.TxnRtnCode;
 import org.fbi.sbs.helper.AvroSchemaManager;
 import org.fbi.sbs.helper.FbiBeanUtils;
 import org.fbi.sbs.helper.MybatisFactory;
+import org.fbi.sbs.helper.ProjectConfigManager;
 import org.fbi.sbs.repository.dao.ActtbcMapper;
 import org.fbi.sbs.repository.dao.ActtmcMapper;
 import org.fbi.sbs.repository.dao.ActtscMapper;
@@ -36,7 +38,14 @@ public class T8848Processor extends AbstractTxnProcessor {
     @Override
     protected void doRequest(Stdp10ProcessorRequest request, Stdp10ProcessorResponse response) throws ProcessorException, IOException {
 
-        Tia8848 tia8848 = (Tia8848) tia;
+        Tia8848 tia8848 = null;
+        try {
+            tia8848 = (Tia8848) decode("8848", request.getRequestBody());
+        } catch (Exception e) {
+            response.setHeader("rtnCode", TxnRtnCode.TXN_EXECUTE_FAILED.getCode());
+            response.setResponseBody(("解码错误").getBytes(response.getCharacterEncoding()));
+            return;
+        }
 
         // 获取请求操作的人员ID和日期
         String tellerId = request.getHeader("tellerId").trim().substring(0, 4);
@@ -82,6 +91,9 @@ public class T8848Processor extends AbstractTxnProcessor {
         } else if (funcde == 1) {
             // 跳过begnum笔ACTTSC[行业代码小类]记录
             begnum = Integer.parseInt(tia8848.begnum);
+            if (begnum == 0) {
+                begnum = 1;
+            }
         }
 
         switch (funcde) {
@@ -99,7 +111,7 @@ public class T8848Processor extends AbstractTxnProcessor {
                 t908.tdbnam = tbc.getTdbnam();
                 response.setHeader("rtnCode", TxnRtnCode.TXN_EXECUTE_SECCESS.getCode());
                 try {
-                    response.setResponseBody(AvroSchemaManager.encode("T908", t908));
+                    response.setResponseBody(encode("T908", t908));
                 } catch (IllegalAccessException e) {
                     response.setHeader("rtnCode", TxnRtnCode.TXN_EXECUTE_FAILED.getCode());
                     response.setResponseBody(("组装响应报文时序列化异常").getBytes(response.getCharacterEncoding()));
@@ -108,33 +120,11 @@ public class T8848Processor extends AbstractTxnProcessor {
                 break;
             case 1:
                 // 跳过begnum笔记录
-                // TODO 多笔
-                List<Acttsc> tscList = qryAllActtsc();
-                tscList = tscList.subList(begnum, tscList.size());
+                List<Acttsc> tscList = qryActtscs(begnum);
                 try {
-
-                    Schema detailSchema = AvroSchemaManager.getSchema(AvroSchemaManager.SCHEMA_PATH + "T909_DETAIL" + AvroSchemaManager.SCHEMA_SUFFIX);
-//                    logger.info(detailSchema.toString());
-                    GenericData.Array<GenericRecord> details =  new GenericData.Array<GenericRecord>(tscList.size(), null);
-
-                    for(Acttsc bean : tscList) {
-                        GenericData.Record detail = new GenericData.Record(detailSchema);
-                        detail.put("tddtdc", bean.getTddtdc());
-                        detail.put("tddnam", bean.getTddnam());
-                        details.add(detail);
-                    }
-                    Schema schema = AvroSchemaManager.getSchema(AvroSchemaManager.SCHEMA_PATH + "T909" + AvroSchemaManager.SCHEMA_SUFFIX);
-                    GenericDatumWriter<GenericData.Record> datumWriter = new GenericDatumWriter<>(schema);
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    JsonEncoder encoder = EncoderFactory.get().jsonEncoder(schema, baos);
-                    GenericData.Record record = new GenericData.Record(schema);
-                    record.put("totcnt", tscList.size());
-                    record.put("details", details);
-                    datumWriter.write(record, encoder);
-                    encoder.flush();
-                    baos.close();
+                    byte[] jsonByteArray = encodeListToJson("T909", tscList);
                     response.setHeader("rtnCode", TxnRtnCode.TXN_EXECUTE_SECCESS.getCode());
-                    response.setResponseBody(baos.toByteArray());
+                    response.setResponseBody(jsonByteArray);
                 } catch (Exception e) {
                     response.setHeader("rtnCode", TxnRtnCode.TXN_EXECUTE_FAILED.getCode());
                     response.setResponseBody(("组装响应报文时序列化异常").getBytes(response.getCharacterEncoding()));
@@ -176,12 +166,16 @@ public class T8848Processor extends AbstractTxnProcessor {
         }
     }
 
-    private List<Acttsc> qryAllActtsc() {
+    // 多笔查询,每包最多笔数见属性:sbs.list.size
+    private List<Acttsc> qryActtscs(int begnum) {
+        int cnt = Integer.parseInt(ProjectConfigManager.getInstance().getProperty("sbs.list.size"));
+        int endIndex = begnum + cnt - 1;
         SqlSession session = MybatisFactory.ORACLE.getInstance().openSession();
         ActtscMapper mapper = session.getMapper(ActtscMapper.class);
-        ActtscExample example = new ActtscExample();
+        /*ActtscExample example = new ActtscExample();
         example.setOrderByClause(" TDDTDC desc ");
-        return mapper.selectByExample(example);
+        return mapper.selectByExample(example);*/
+        return mapper.qryByIndex(String.valueOf(begnum), String.valueOf(endIndex));
     }
 
     // 根据小类码查询小类
@@ -324,6 +318,30 @@ public class T8848Processor extends AbstractTxnProcessor {
                 session = null;
             }
         }
+    }
+
+    // 多笔编码
+    protected byte[] encodeListToJson(String formCode, List<Acttsc> tscList) throws IOException {
+        Schema schema = AvroSchemaManager.getSchema(formCode);
+        GenericDatumWriter<GenericData.Record> datumWriter = new GenericDatumWriter<>(schema);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        JsonEncoder encoder = EncoderFactory.get().jsonEncoder(schema, baos);
+        GenericData.Record record = new GenericData.Record(schema);
+        record.put("totcnt", String.valueOf(tscList.size()));
+        Schema detailsSchema = schema.getField("details").schema();
+        GenericData.Array<GenericRecord> details = new GenericData.Array<GenericRecord>(tscList.size(), detailsSchema);
+        Schema detailSchema = detailsSchema.getElementType();
+        for (Acttsc bean : tscList) {
+            GenericData.Record detail = new GenericData.Record(detailSchema);
+            detail.put("tddtdc", bean.getTddtdc());
+            detail.put("tddnam", bean.getTddnam());
+            details.add(detail);
+        }
+        record.put("details", details);
+        datumWriter.write(record, encoder);
+        encoder.flush();
+        baos.close();
+        return baos.toByteArray();
     }
 
 }
