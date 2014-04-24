@@ -51,6 +51,8 @@
       <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/protobuf/src/test/java" />
       <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/maven-plugin/src/main/java" />
       <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/maven-plugin/src/test/java" />
+      <root url="file://D:/tech/avro/avro-src-1.7.6/lang/java/avro/src/main/java" />
+      <root url="file://D:/tech/avro/avro-src-1.7.6/lang/java/avro/src/test/java" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/lib/lib-app" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/lib/lib-comp" recursive="false" />

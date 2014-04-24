@@ -1,0 +1,9 @@
+{
+ "namespace": "org.fbi.avro",
+ "type": "record",
+ "name": "Test",
+ "fields": [
+     {"name": "param1", "type": "string"},
+     {"name": "param2", "type": "string"}
+ ]
+}

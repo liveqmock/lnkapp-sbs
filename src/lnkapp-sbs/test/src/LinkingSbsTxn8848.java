@@ -82,22 +82,18 @@ public class LinkingSbsTxn8848 {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             JsonEncoder encoder = EncoderFactory.get().jsonEncoder(schema, baos);
             GenericData.Record record = new GenericData.Record(schema);
-            record.put("batseq", "11111");
-            record.put("orgidt", "010");
+            record.put("batseq", "");
+            record.put("orgidt", "");
             record.put("pastyp", "1");
             record.put("inpflg", "23");
             record.put("sbknum", "56");
             record.put("wrkunt", "Big");
-            record.put("funcde", "4");
+            record.put("funcde", "1");
             // // 4-增 3-删 2-改 0-单笔 1-多笔
 
             record.put("depnum", "jigou");
             record.put("stmadd", "Middle");
-            byte[] bytes = "12中34".getBytes("UTF-8");
-            String utf8Str = new String(bytes, "UTF-8");
-            System.out.println(utf8Str);
             record.put("intnet", "12中34");
-            System.out.println(getHexString(bytes));
 
             record.put("engnam", "hangyeA");
             record.put("regadd", "regadd");
@@ -109,6 +105,7 @@ public class LinkingSbsTxn8848 {
             encoder.flush();
             baos.close();
             String msg = new String(baos.toByteArray(), "UTF-8");
+            System.out.println(msg);
 /*
             GenericDatumReader<GenericRecord> datumReader = new GenericDatumReader<GenericRecord>(schema);
             JsonDecoder decoder = DecoderFactory.get().jsonDecoder(schema, msg);
@@ -130,7 +127,7 @@ public class LinkingSbsTxn8848 {
                 strLen += " ";
             }
             byte[] recvbuf = client.call((strLen + message).getBytes("UTF-8"));
-            System.out.printf("接收报文:%s\n", new String(recvbuf, "GBK"));
+            System.out.printf("接收报文:%s\n", new String(recvbuf, "UTF-8"));
         } catch (Exception e) {
             e.printStackTrace();
         }
