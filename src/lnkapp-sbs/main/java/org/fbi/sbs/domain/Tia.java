@@ -25,10 +25,8 @@ public class Tia {
             // TODO 暂时只处理String类型 中文乱码
             Object obj = record.get(f.getName());
             if (obj instanceof Utf8) {
-                Utf8 utfVal = (Utf8) obj;
-//                String val = new String(utfVal.toString().getBytes("GBK"), "GBK");
-//                logger.info(getHexString(utfVal.getBytes()) + "::Utf8::" + utfVal.toString() + "::GBK::" + val);
-                f.set(this, utfVal.toString());
+                String strVal = obj.toString();
+                f.set(this, strVal == null ? "" : strVal);
 
             } else {
                 throw new RuntimeException("交易暂时只支持字符类型");

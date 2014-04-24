@@ -42,8 +42,9 @@ public class T8848Processor extends AbstractTxnProcessor {
         try {
             tia8848 = (Tia8848) decode("8848", request.getRequestBody());
         } catch (Exception e) {
+            logger.error("8848½âÂë´íÎó", e);
             response.setHeader("rtnCode", TxnRtnCode.TXN_EXECUTE_FAILED.getCode());
-            response.setResponseBody(("½âÂë´íÎó").getBytes(response.getCharacterEncoding()));
+            response.setResponseBody(("8848½âÂë´íÎó").getBytes(response.getCharacterEncoding()));
             return;
         }
 
