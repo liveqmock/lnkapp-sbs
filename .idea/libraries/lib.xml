@@ -30,6 +30,27 @@
       <root url="file://D:/development/java/avro/avro-src-1.7.6/lang/java/protobuf/src/test/java" />
       <root url="file://D:/development/java/avro/avro-src-1.7.6/lang/java/maven-plugin/src/main/java" />
       <root url="file://D:/development/java/avro/avro-src-1.7.6/lang/java/maven-plugin/src/test/java" />
+      <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/ipc/src/main/java" />
+      <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/ipc/src/test/java" />
+      <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/avro/src/main/java" />
+      <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/avro/src/test/java" />
+      <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/tools/src/main/java" />
+      <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/tools/src/test/java" />
+      <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/tools/src/test/compiler/output-string" />
+      <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/mapred/src/main/java" />
+      <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/mapred/src/test/java" />
+      <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/thrift/src/main/java" />
+      <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/thrift/src/test/java" />
+      <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/trevni/avro/src/main/java" />
+      <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/trevni/avro/src/test/java" />
+      <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/trevni/core/src/main/java" />
+      <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/trevni/core/src/test/java" />
+      <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/compiler/src/main/java" />
+      <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/compiler/src/test/java" />
+      <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/protobuf/src/main/java" />
+      <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/protobuf/src/test/java" />
+      <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/maven-plugin/src/main/java" />
+      <root url="file://D:/tech/java/avro/avro-src-1.7.6/lang/java/maven-plugin/src/test/java" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/lib/lib-app" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/lib/lib-comp" recursive="false" />

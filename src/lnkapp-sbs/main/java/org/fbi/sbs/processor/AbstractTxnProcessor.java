@@ -59,10 +59,10 @@ public abstract class AbstractTxnProcessor extends Stdp10Processor {
     abstract protected void doRequest(Stdp10ProcessorRequest request, Stdp10ProcessorResponse response) throws ProcessorException, IOException;
 
     // µ¥±Ê½âÂë
-    protected Tia decode(String txnCode, byte[] bytes) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+    protected Tia decode(String txnCode, byte[] buf) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
         Schema schema = AvroSchemaManager.getSchema(AvroSchemaManager.SCHEMA_PREFIX + txnCode);
         GenericDatumReader<GenericRecord> datumReader = new GenericDatumReader<GenericRecord>(schema);
-        JsonDecoder decoder = DecoderFactory.get().jsonDecoder(schema, new String(bytes));
+        JsonDecoder decoder = DecoderFactory.get().jsonDecoder(schema, new String(buf, "UTF-8"));
 
         GenericData.Record record = new GenericData.Record(schema);
         datumReader.read(record, decoder);
