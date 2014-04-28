@@ -1,7 +1,7 @@
 {
- "namespace": "org.fbi.sbs.avro",
+ "namespace": "org.fbi.sbs.domain.toa",
  "type": "record",
- "name": "T908",
+ "name": "Toa908",
  "fields": [
      {"name": "tdbsrt", "type": "string"},
      {"name": "tdmsrt", "type": "string"},

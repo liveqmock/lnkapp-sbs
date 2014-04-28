@@ -1,7 +1,7 @@
 {
- "namespace": "org.fbi.sbs.avro",
+ "namespace": "org.fbi.sbs.domain.tia",
  "type": "record",
- "name": "M8848",
+ "name": "Tia8848",
  "fields": [
      {"name": "batseq", "type": "string"},
      {"name": "orgidt", "type": "string"},

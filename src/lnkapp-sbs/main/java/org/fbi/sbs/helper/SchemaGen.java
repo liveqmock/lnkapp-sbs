@@ -10,27 +10,27 @@ public class SchemaGen {
 
         try {
             String srcFile = "D:\\workspace\\pco-sbs\\ac\\book\\ACKT908";
-            String formCode = "T908";
+            String formCode = "Toa908";
             FileInputStream fis = new FileInputStream(new File(srcFile));
             BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 
             File avscFile = new File("src/lnkapp-sbs/main/resources/schemas/" + formCode + ".avsc");
-            if(avscFile.exists()) {
-                System.out.println(avscFile.getAbsolutePath()+ avscFile.getName() + " 已存在");
+            if (avscFile.exists()) {
+                System.out.println(avscFile.getAbsolutePath() + avscFile.getName() + " 已存在");
                 return;
             } else {
                 avscFile.createNewFile();
             }
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(avscFile)));
             StringBuffer buf = new StringBuffer("{\n" +
-                    " \"namespace\": \"org.fbi.sbs.avro\",\n" +
+                    " \"namespace\": \"org.fbi.sbs.domain.toa\",\n" +
                     " \"type\": \"record\",\n" +
                     " \"name\": \"" + formCode + "\",\n" +
                     " \"fields\": [");
             String line = null;
             String varPrefix = formCode + "-";
-            while((line = br.readLine()) != null) {
-                if(line.contains(varPrefix)) {
+            while ((line = br.readLine()) != null) {
+                if (line.contains(varPrefix)) {
                     int index = line.indexOf(varPrefix) + varPrefix.length();
                     String var = line.substring(index, index + 6).toLowerCase();
                     buf.append("\n     {\"name\": \"" + var + "\", \"type\": \"string\"},");

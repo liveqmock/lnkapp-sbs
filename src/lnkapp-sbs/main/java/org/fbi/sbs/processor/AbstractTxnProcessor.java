@@ -67,7 +67,7 @@ public abstract class AbstractTxnProcessor extends Stdp10Processor {
         GenericData.Record record = new GenericData.Record(schema);
         datumReader.read(record, decoder);
 
-        String className = "org.fbi.sbs.domain.Tia" + txnCode;
+        String className = "org.fbi.sbs.domain.tia.Tia" + txnCode;
         Class clazz = Class.forName(className);
         Tia tia = (Tia) clazz.newInstance();
         tia.from(record);

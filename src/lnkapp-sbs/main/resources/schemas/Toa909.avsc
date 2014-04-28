@@ -1,13 +1,14 @@
 {
- "namespace": "org.fbi.sbs.avro",
+ "namespace": "org.fbi.sbs.domain.toa",
  "type": "record",
- "name": "T909",
+ "name": "Toa909",
  "fields": [
      {"name": "totcnt", "type": "string"},
      {"name": "details",
       "type":{
               "type": "array",
               "items":{
+                       "namespace:": "org.fbi.sbs.domain.toa.detail"
                        "name": "detail",
                        "type": "record",
                        "fields": [
