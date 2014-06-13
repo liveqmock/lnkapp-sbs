@@ -1,11 +1,8 @@
 {
- "namespace": "org.fbi.sbs.domain.tia",
+ "namespace": "org.fbi.sbs.online.code.txn88484.domain",
  "type": "record",
- "name": "Tia8848",
+ "name": "Tia88484",
  "fields": [
-     {"name": "batseq", "type": "string"},
-     {"name": "orgidt", "type": "string"},
-     {"name": "depnum", "type": "string"},
      {"name": "pastyp", "type": "string"},
      {"name": "inpflg", "type": "string"},
      {"name": "sbknum", "type": "string"},

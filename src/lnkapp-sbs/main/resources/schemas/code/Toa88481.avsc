@@ -1,15 +1,15 @@
 {
- "namespace": "org.fbi.sbs.domain.toa",
+ "namespace": "org.fbi.sbs.online.code.txn88481.domain",
  "type": "record",
- "name": "Toa909",
+ "name": "Toa88481",
  "fields": [
      {"name": "totcnt", "type": "string"},
-     {"name": "details",
+     {"name": "infos",
       "type":{
               "type": "array",
               "items":{
-                       "namespace:": "org.fbi.sbs.domain.toa.detail"
-                       "name": "detail",
+                       "namespace:": "org.fbi.sbs.online.code.txn88481.domain",
+                       "name": "IndustryInfo",
                        "type": "record",
                        "fields": [
                                   {"name": "tddtdc", "type": "string"},
@@ -18,5 +18,5 @@
                       }
               }
       }
-             ]
+           ]
 }

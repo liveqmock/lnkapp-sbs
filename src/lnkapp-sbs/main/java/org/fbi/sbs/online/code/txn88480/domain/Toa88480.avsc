@@ -1,0 +1,20 @@
+{
+ "namespace": "org.fbi.sbs.online.code.txn88480.domain",
+ "type": "record",
+ "name": "Toa88480",
+ "fields": [
+     {"name": "tdbsrt", "type": "string"},
+     {"name": "tdmsrt", "type": "string"},
+     {"name": "tdssrt", "type": "string"},
+     {"name": "tdbnam", "type": "string"},
+     {"name": "tdmnam", "type": "string"},
+     {"name": "tdsnam", "type": "string"},
+     {"name": "tddnam", "type": "string"},
+     {"name": "tddcn1", "type": "string"},
+     {"name": "tddcn2", "type": "string"},
+     {"name": "tddcn3", "type": "string"},
+     {"name": "tddcn4", "type": "string"},
+     {"name": "amdtlr", "type": "string"},
+     {"name": "upddat", "type": "string"}
+ ]
+}
