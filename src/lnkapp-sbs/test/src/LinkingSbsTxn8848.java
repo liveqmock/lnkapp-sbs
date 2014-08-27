@@ -36,13 +36,14 @@ public class LinkingSbsTxn8848 {
             if (readNum < 6) {
                 throw new RuntimeException("报文头长度读取错误");
             }
-            int msgLen = Integer.parseInt(new String(recvbuf).trim());
+            int msgLen = Integer.parseInt(new String(recvbuf, "UTF-8").trim()) - 6;
             recvbuf = new byte[msgLen];
 
             readNum = is.read(recvbuf);
-            if (readNum != msgLen - 6) {
-                throw new RuntimeException("报文读取异常");
+            if(readNum != msgLen) {
+                throw new RuntimeException("报文长度和接收长度不一致");
             }
+            System.out.println("实际接收长度：" + readNum + " 报文头长度字段值：" + msgLen);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -57,11 +58,11 @@ public class LinkingSbsTxn8848 {
         return recvbuf;
     }
 
-    private String getRequestMsg8848(String body) {
+    private String getRequestMsg(String txnCode, String body) {
         String header = "1.0" +    // 3 version
                 "123456789012345678" + // 18 serialNo
                 "0000" + // 4-rtnCode
-                "1538848" + // 7-txnCode
+                txnCode + "  " + // 7-txnCode
                 "999999999" + // 9-branchId
                 "123456789012" + // 12-tellerId
                 "FIS153" +  //userid 6
@@ -77,48 +78,24 @@ public class LinkingSbsTxn8848 {
 
         try {
 
-            Schema schema = AvroSchemaManager.getSchema("schemas/M8848.avsc");
+            Schema schema = AvroSchemaManager.getSchema("schemas/code/Tia88480.avsc");
             GenericDatumWriter<GenericData.Record> datumWriter = new GenericDatumWriter<>(schema);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             JsonEncoder encoder = EncoderFactory.get().jsonEncoder(schema, baos);
             GenericData.Record record = new GenericData.Record(schema);
-            record.put("batseq", "");
-            record.put("orgidt", "");
             record.put("pastyp", "1");
             record.put("inpflg", "23");
             record.put("sbknum", "56");
-            record.put("wrkunt", "Big");
-            record.put("funcde", "1");
-            // // 4-增 3-删 2-改 0-单笔 1-多笔
 
-            record.put("depnum", "jigou");
-            record.put("stmadd", "Middle");
-            record.put("intnet", "12中34");
-
-            record.put("engnam", "hangyeA");
-            record.put("regadd", "regadd");
-            record.put("coradd", "coradd");
-            record.put("cusnam", "zhangsan");
-            record.put("begnum", "2");
 
             datumWriter.write(record, encoder);
             encoder.flush();
             baos.close();
             String msg = new String(baos.toByteArray(), "UTF-8");
             System.out.println(msg);
-/*
-            GenericDatumReader<GenericRecord> datumReader = new GenericDatumReader<GenericRecord>(schema);
-            JsonDecoder decoder = DecoderFactory.get().jsonDecoder(schema, msg);
-            GenericData.Record record2 = new GenericData.Record(schema);
-            datumReader.read(record2, decoder);
-
-            System.out.println(record2.get("cusnam").toString());
-            System.out.println(record2.get("funcde"));
-            System.out.println(record2.get("wrkunt"));
-            System.out.println(record2.get("wrkunt").getClass().getName());*/
 
             LinkingSbsTxn8848 client = new LinkingSbsTxn8848();
-            String message = client.getRequestMsg8848(msg);
+            String message = client.getRequestMsg("88480", msg);
             System.out.printf("发送报文:%s\n", message);
 
             int len = message.getBytes("UTF-8").length;
@@ -131,13 +108,5 @@ public class LinkingSbsTxn8848 {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-    public static String getHexString(byte[] b) {
-        String result = "";
-        for (int i=0; i < b.length; i++) {
-//            result += Integer.toString( ( b[i] & 0xff ) + 0x100, 16).substring( 1 );
-            result += Integer.toHexString(b[i] & 0xff);
-        }
-        return result;
     }
 }

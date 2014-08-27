@@ -14,7 +14,7 @@ import org.fbi.linking.processor.ProcessorException;
 import org.fbi.linking.processor.standprotocol10.Stdp10Processor;
 import org.fbi.linking.processor.standprotocol10.Stdp10ProcessorRequest;
 import org.fbi.linking.processor.standprotocol10.Stdp10ProcessorResponse;
-import org.fbi.sbs.helper.AvroSchemaManager;
+import org.fbi.sbs.helper.ProjectConfigManager;
 import org.fbi.sbs.online.code.txn88480.domain.Toa88480;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +23,7 @@ import org.slf4j.MDC;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Objects;
 
 /**
  * User: zhanrui
@@ -31,6 +32,7 @@ import java.io.UnsupportedEncodingException;
  */
 public abstract class AbstractTxnProcessor extends Stdp10Processor {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final String CODING_TYPE = ProjectConfigManager.getInstance().getProperty("sbs.avro.coding");
 
     @Override
     public void service(Stdp10ProcessorRequest request, Stdp10ProcessorResponse response) throws ProcessorException, IOException {
@@ -58,22 +60,37 @@ public abstract class AbstractTxnProcessor extends Stdp10Processor {
     abstract protected void doRequest(Stdp10ProcessorRequest request, Stdp10ProcessorResponse response) throws ProcessorException, IOException;
 
     // 解码
-    protected Object decode(Class txnBeanClass, byte[] buf) throws IllegalAccessException, InstantiationException, IOException {
+    protected Object decode(Class txnBeanClass, byte[] buf, String charsetName) throws IllegalAccessException, InstantiationException, IOException {
         Object obj = txnBeanClass.newInstance();
-        SpecificDatumReader<Object> datumReader = new SpecificDatumReader<Object>(txnBeanClass);
-        JsonDecoder decoder = DecoderFactory.get().jsonDecoder(datumReader.getSchema(), new String(buf, "UTF-8"));
+        SpecificDatumReader datumReader = new SpecificDatumReader(txnBeanClass);
+        Decoder decoder = null;
+        if ("json".equalsIgnoreCase(CODING_TYPE)) {
+            decoder = DecoderFactory.get().jsonDecoder(datumReader.getSchema(), new String(buf, charsetName));
+        } else if ("binary".equalsIgnoreCase(CODING_TYPE)) {
+            decoder = DecoderFactory.get().binaryDecoder(buf, null);
+        } else {
+            throw new RuntimeException("无效 AVRO 编码方式：" + CODING_TYPE);
+        }
         datumReader.read(obj, decoder);
         return obj;
     }
 
     // 编码
-    protected byte[] encode(Schema schema, Object toa) throws IOException, IllegalAccessException {
-        SpecificDatumWriter<Object> datumWriter = new SpecificDatumWriter<>();
+    protected byte[] encode(Schema schema, Object toa, String charsetName) throws IOException, IllegalAccessException {
+        SpecificDatumWriter datumWriter = new SpecificDatumWriter(schema);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Encoder encoder = EncoderFactory.get().jsonEncoder(schema, baos);
+        Encoder encoder = null;
+        if ("json".equalsIgnoreCase(CODING_TYPE)) {
+            encoder = EncoderFactory.get().jsonEncoder(schema, baos);
+        } else if ("binary".equalsIgnoreCase(CODING_TYPE)) {
+            encoder = EncoderFactory.get().binaryEncoder(baos, null);
+        } else {
+            throw new RuntimeException("无效 AVRO 编码方式：" + CODING_TYPE);
+        }
         datumWriter.write(toa, encoder);
         encoder.flush();
         baos.close();
-        return baos.toByteArray();
+        String res = baos.toString(charsetName);
+        return res.getBytes(charsetName);
     }
 }

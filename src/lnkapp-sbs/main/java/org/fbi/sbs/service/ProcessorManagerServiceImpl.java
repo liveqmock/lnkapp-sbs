@@ -20,12 +20,14 @@ public class ProcessorManagerServiceImpl implements ProcessorManagerService {
     private Hashtable<String, AbstractTxnProcessor> processors;
 
     public ProcessorManagerServiceImpl() {
+        logger.info("init ProcessorManagerServiceImpl....");
         init();
     }
 
     public void init() {
         try {
-            this.processors = new ProcessorScanner().scan("org.fbi.sbs.online");
+            if (this.processors == null)
+                this.processors = new ProcessorScanner().scan("org.fbi.sbs.online");
         } catch (Exception e) {
             logger.error("Processor扫描异常.", e);
         }
@@ -38,13 +40,13 @@ public class ProcessorManagerServiceImpl implements ProcessorManagerService {
 
     public Processor getProcessor(String txnCode) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
 
-        AbstractTxnProcessor processor = processors.get(txnCode);
+        AbstractTxnProcessor processor = processors.get(txnCode.trim());
         if (processor == null) {
             init();
-            processor = processors.get(txnCode);
+            processor = processors.get(txnCode.trim());
         }
         if (processor == null) {
-            throw new RuntimeException("SBS不存在交易" + txnCode);
+            throw new RuntimeException("sbs不存在交易：" + txnCode);
         }
         return processor;
     }

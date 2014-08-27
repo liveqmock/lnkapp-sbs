@@ -1,0 +1,18 @@
+{
+ "namespace": "org.fbi.sbs.online.code.txn88482.domain",
+ "type": "record",
+ "name": "Tia88482",
+ "fields": [
+     {"name": "pastyp", "type": "string"},
+     {"name": "inpflg", "type": "string"},
+     {"name": "sbknum", "type": "string"},
+     {"name": "wrkunt", "type": "string"},
+     {"name": "stmadd", "type": "string"},
+     {"name": "intnet", "type": "string"},
+
+     {"name": "engnam", "type": "string"},
+     {"name": "regadd", "type": "string"},
+     {"name": "coradd", "type": "string"},
+     {"name": "cusnam", "type": "string"}
+ ]
+}

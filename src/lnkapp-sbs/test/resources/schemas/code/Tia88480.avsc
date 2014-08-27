@@ -1,0 +1,10 @@
+{
+ "namespace": "org.fbi.sbs.online.code.txn88480.domain",
+ "type": "record",
+ "name": "Tia88480",
+ "fields": [
+     {"name": "pastyp", "type": "string"},
+     {"name": "inpflg", "type": "string"},
+     {"name": "sbknum", "type": "string"}
+ ]
+}

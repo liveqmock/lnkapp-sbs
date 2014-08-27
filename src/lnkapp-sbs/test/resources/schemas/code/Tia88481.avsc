@@ -1,0 +1,8 @@
+{
+ "namespace": "org.fbi.sbs.online.code.txn88481.domain",
+ "type": "record",
+ "name": "Tia88481",
+ "fields": [
+     {"name": "begnum", "type": "string"}
+ ]
+}
